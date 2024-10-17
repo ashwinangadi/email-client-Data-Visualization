@@ -8,12 +8,16 @@ import { Email } from "@/lib/types";
 import { useEmailState } from "@/store/email-state-store";
 import { useSearchParams } from "next/navigation";
 import EmailPagination from "./email-pagination";
+import { useDrawerState } from "@/store/drawer-store";
 
 const EmailsList = () => {
   const searchParams = useSearchParams();
   const paginate = Number(searchParams.get("page")) || 1;
   const { data } = useSuspenseQuery(emailListOptions(Number(paginate)));
   const { read, favorites } = useEmailState();
+  const { toggleDrawer, isDrawerOpen } = useDrawerState();
+
+  console.log(isDrawerOpen);
 
   const readEmails = read;
   const favoriteEmails = favorites;
@@ -28,6 +32,13 @@ const EmailsList = () => {
     favoriteEmails.includes(email.id)
   );
 
+  const handleEmailCardClick = () => {
+    if (window.innerWidth < 1024) {
+      // Check if screen size is smaller than 'lg'
+      toggleDrawer(true);
+    }
+  };
+
   return (
     <Tabs defaultValue="all" className=" ">
       <span className="flex items-center gap-2">
@@ -40,7 +51,10 @@ const EmailsList = () => {
         </TabsList>
       </span>
       <TabsContent value="all" className="">
-        <div className="flex flex-col gap-6 h-[85vh] overflow-auto">
+        <div
+          className="flex flex-col gap-6 h-[85vh] overflow-auto"
+          onClick={handleEmailCardClick}
+        >
           {data?.list?.map((email: Email) => (
             <EmailCard key={email.id} {...email} />
           ))}
@@ -50,7 +64,10 @@ const EmailsList = () => {
         )}
       </TabsContent>
       <TabsContent value="unread" className="">
-        <div className="flex flex-col gap-6 h-[90vh] overflow-auto">
+        <div
+          className="flex flex-col gap-6 h-[90vh] overflow-auto"
+          onClick={handleEmailCardClick}
+        >
           {unreadEmailList?.length > 0 ? (
             unreadEmailList?.map((email: Email) => (
               <EmailCard key={email.id} {...email} />
@@ -64,7 +81,10 @@ const EmailsList = () => {
       </TabsContent>
 
       <TabsContent value="read">
-        <div className="flex flex-col gap-6 h-[90vh] overflow-auto">
+        <div
+          className="flex flex-col gap-6 h-[90vh] overflow-auto"
+          onClick={handleEmailCardClick}
+        >
           {readEmailList?.length > 0 ? (
             readEmailList?.map((email: Email) => (
               <EmailCard key={email.id} {...email} />
@@ -76,7 +96,7 @@ const EmailsList = () => {
           )}
         </div>
       </TabsContent>
-      <TabsContent value="favorites">
+      <TabsContent value="favorites" onClick={handleEmailCardClick}>
         {" "}
         <div className="flex flex-col gap-6 h-[90vh] overflow-auto">
           {favoriteEmailList?.length > 0 ? (

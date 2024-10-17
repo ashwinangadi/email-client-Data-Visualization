@@ -26,7 +26,7 @@ const EmailBody = ({ id, page }: { id: string; page: number }) => {
   const email = emailData?.list?.find((email: Email) => email.id === id);
   return (
     <Card
-      className={`group flex-col items-start hover:border hover:border-primary hover:shadow-lg hover:shadow-primary/20 hover:duration-300 text-sm h-[90vh] p-6 `}
+      className={`group flex-col items-start rounded-none lg:rounded-xl hover:shadow-lg hover:shadow-primary/20 hover:duration-300 text-sm h-[70vh] lg:h-[90vh] p-6 `}
     >
       <CardHeader className="flex-row items-start justify-between gap-2 p-0">
         <div className="flex items-center gap-2">
