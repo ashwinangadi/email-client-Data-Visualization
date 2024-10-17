@@ -13,15 +13,14 @@ import { useEmailState } from "@/store/email-state-store";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import useConvertToTime from "@/hooks/useConvertToTime";
 
 const EmailCard = ({ id, from, subject, short_description, date }: Email) => {
   const searchParams = useSearchParams();
   const paramId = searchParams.get("Id");
   const { replace } = useRouter();
   const pathname = usePathname();
-  const { read, favorites, toggleFavoriteEmail, addReadEmail } =
-    useEmailState();
+  const { read, favorites, addReadEmail } = useEmailState();
 
   const isFavorite = favorites.includes(id);
   const isRead = read.includes(id);
@@ -33,27 +32,6 @@ const EmailCard = ({ id, from, subject, short_description, date }: Email) => {
     const newURL = `${pathname}?${params.toString()}`;
     replace(newURL);
   };
-
-  const convertedDate = new Date(date)
-    .toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    })
-    .replace(",", "");
-
-  const handleFavoriteClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    toggleFavoriteEmail(id);
-    if (!isFavorite) {
-      toast.success("Email added to favorites");
-    } else {
-      toast.success("Email removed from favorites");
-    }
-  };
   return (
     <Card
       onClick={handleCardClick}
@@ -64,7 +42,7 @@ const EmailCard = ({ id, from, subject, short_description, date }: Email) => {
       <Avatar className="mx-3 my-2">
         <AvatarImage src="" />
         <AvatarFallback className="bg-primary text-white">
-          {from.name.substring(0, 2).toUpperCase()}
+          {from.name.substring(0, 1).toUpperCase()}
         </AvatarFallback>
       </Avatar>
 
@@ -83,12 +61,9 @@ const EmailCard = ({ id, from, subject, short_description, date }: Email) => {
           <p>{short_description}</p>
         </CardContent>
         <CardFooter className="flex items-center px-2.5 pb-2">
-          <p suppressHydrationWarning>{convertedDate}</p>
-          <p
-            onClick={handleFavoriteClick}
-            className="text-primary ms-5 font-bold cursor-pointer text-sm hidden group-hover:inline-flex"
-          >
-            {isFavorite ? "Unfavorite" : "Favorite"}
+          <p suppressHydrationWarning>{useConvertToTime(Number(date))}</p>
+          <p className="text-primary ms-5 font-bold text-sm">
+            {isFavorite && "Favorite"}
           </p>
         </CardFooter>
       </span>

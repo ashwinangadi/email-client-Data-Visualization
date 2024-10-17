@@ -1,34 +1,21 @@
 "use client";
-
-// import { dehydrate, QueryClient } from "@tanstack/react-query";
 import React from "react";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
-// import { HydrationBoundary } from "@tanstack/react-query";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import EmailBody from "./email-body";
 import { useDrawerState } from "@/store/drawer-store";
 
-const ResponsiveDrawer = ({
-  //   emailBodyQueryClient,
-  Id,
-  Page,
-}: {
-  //   emailBodyQueryClient: QueryClient;
-  //   searchParams: { Id?: string; page?: number };
-  Id: string;
-  Page: number;
-}) => {
-
+const ResponsiveDrawer = ({ Id, Page }: { Id: string; Page: number }) => {
   const { isDrawerOpen, toggleDrawer } = useDrawerState();
   return (
-    <span className="lg:hidden">
-      <Drawer open={isDrawerOpen} onOpenChange={toggleDrawer}>
-        <DrawerContent>
-          {/* <HydrationBoundary state={dehydrate(emailBodyQueryClient)}> */}
-          <EmailBody id={Id ?? ""} page={Number(Page ?? 1)} />
-          {/* </HydrationBoundary> */}
-        </DrawerContent>
-      </Drawer>
-    </span>
+    <Drawer open={isDrawerOpen} onOpenChange={toggleDrawer}>
+      <DrawerTitle className="hidden">Email</DrawerTitle>
+      <DrawerContent aria-describedby="email-description">
+        <div id="email-description" className="sr-only">
+          This section contains the email body content.
+        </div>
+        <EmailBody id={Id ?? ""} page={Number(Page ?? 1)} />
+      </DrawerContent>
+    </Drawer>
   );
 };
 

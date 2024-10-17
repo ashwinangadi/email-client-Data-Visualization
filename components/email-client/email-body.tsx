@@ -14,6 +14,7 @@ import { emailBodyOptions } from "@/lib/emailActions";
 import { emailListOptions } from "@/lib/emailActions";
 import AddToFavorite from "./add-to-favorite";
 import { Email } from "@/lib/types";
+import useConvertToTime from "@/hooks/useConvertToTime";
 
 const EmailBody = ({ id, page }: { id: string; page: number }) => {
   const { data: bodyData, isLoading: bodyLoading } = useSuspenseQuery(
@@ -33,12 +34,14 @@ const EmailBody = ({ id, page }: { id: string; page: number }) => {
           <Avatar className="me-3 mb-5">
             <AvatarImage src="" />
             <AvatarFallback className="bg-primary text-white">
-              {email?.from.name.substring(0, 2).toUpperCase()}
+              {email?.from.name.substring(0, 1).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <span className="flex-col w-full">
-            <CardTitle>{email?.from.name}</CardTitle>
-            <CardDescription className="mt-5">{email?.subject}</CardDescription>
+            <CardTitle>{email?.subject}</CardTitle>
+            <CardDescription className="mt-5">
+              {useConvertToTime(Number(email?.date))}
+            </CardDescription>
           </span>
         </div>
         <AddToFavorite id={id} />

@@ -11,7 +11,6 @@ export async function getEmails(page: number) {
     }
 
     const result = await response.json();
-    // console.log("resultcateg", result);
     return result;
   } catch (error) {
     throw error;
@@ -28,7 +27,6 @@ export async function getEmailBody(id: string) {
     }
 
     const result = await response.json();
-    // console.log("resultcateg", result);
     return result;
   } catch (error) {
     throw error;

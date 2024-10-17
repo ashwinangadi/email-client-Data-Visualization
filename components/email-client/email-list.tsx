@@ -15,9 +15,7 @@ const EmailsList = () => {
   const paginate = Number(searchParams.get("page")) || 1;
   const { data } = useSuspenseQuery(emailListOptions(Number(paginate)));
   const { read, favorites } = useEmailState();
-  const { toggleDrawer, isDrawerOpen } = useDrawerState();
-
-  console.log(isDrawerOpen);
+  const { toggleDrawer } = useDrawerState();
 
   const readEmails = read;
   const favoriteEmails = favorites;

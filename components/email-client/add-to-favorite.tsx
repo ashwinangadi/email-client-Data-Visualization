@@ -21,7 +21,7 @@ const AddToFavorite = ({ id }: { id: string }) => {
       onClick={handleFavoriteClick}
       className="bg-primary text-white font-bold cursor-pointer text-sm  px-5 py-1 rounded-full"
     >
-      {isFavorite ? "Unfavorite" : "Favorite"}
+      {isFavorite ? "Unfavorite" : "Mark as favorite"}
     </p>
   );
 };
