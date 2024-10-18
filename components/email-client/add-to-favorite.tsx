@@ -3,6 +3,7 @@
 import { useEmailState } from "@/store/email-state-store";
 import React from "react";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 const AddToFavorite = ({ id }: { id: string }) => {
   const { favorites, toggleFavoriteEmail } = useEmailState();
@@ -17,12 +18,12 @@ const AddToFavorite = ({ id }: { id: string }) => {
     }
   };
   return (
-    <p
+    <Button
       onClick={handleFavoriteClick}
-      className="bg-primary text-white font-bold cursor-pointer text-sm  px-5 py-1 rounded-full"
+      className=" font-bold cursor-pointer text-sm rounded-full"
     >
       {isFavorite ? "Unfavorite" : "Mark as favorite"}
-    </p>
+    </Button>
   );
 };
 

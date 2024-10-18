@@ -27,6 +27,7 @@ const EmailPagination = ({
   const handleNextPage = () => {
     const params = new URLSearchParams(searchParams);
     if (paginate < totalPages) {
+      params.delete("Id");
       params.set("page", (paginate + 1).toString());
       const newURL = `${pathname}?${params.toString()}`;
       replace(newURL);
@@ -34,8 +35,9 @@ const EmailPagination = ({
   };
 
   const handlePreviousPage = () => {
+    const params = new URLSearchParams(searchParams);
     if (paginate > 1) {
-      const params = new URLSearchParams(searchParams);
+      params.delete("Id");
       params.set("page", (paginate - 1).toString());
       const newURL = `${pathname}?${params.toString()}`;
       replace(newURL);
