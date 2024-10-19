@@ -13,21 +13,36 @@ import { DateRange } from "react-day-picker";
 import { useSearchParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
+import { userSelection } from "@/lib/actions";
 
 export function DateRangePicker({
   availableDates,
+  fromCookie,
+  toCookie,
 }: {
   availableDates: Date[];
+  fromCookie: string | undefined;
+  toCookie: string | undefined;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const urlFrom = decodeURIComponent(
+    searchParams.get("from") || fromCookie || "2024-10-03T18%3A30%3A00.000Z"
+  );
+  const urlTo = decodeURIComponent(
+    searchParams.get("to") || toCookie || "2024-10-13T18%3A30%3A00.000Z"
+  );
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 9, 4),
-    to: addDays(new Date(2024, 9, 4), 10),
-  });
+  const initialDateRange = {
+    from: new Date(urlFrom),
+    to: new Date(urlTo),
+  };
 
-  const handleSelect = (range: DateRange | undefined) => {
+  const [date, setDate] = React.useState<DateRange | undefined>(
+    initialDateRange
+  );
+
+  const handleSelect = async (range: DateRange | undefined) => {
     setDate(range);
     if (range?.from && range?.to) {
       const params = new URLSearchParams(searchParams.toString());
@@ -35,6 +50,7 @@ export function DateRangePicker({
       params.set("to", range.to.toISOString());
       router.push(`?${params.toString()}`);
     }
+    await userSelection({ from: range?.from, to: range?.to });
   };
 
   const availableDateSet = new Set(

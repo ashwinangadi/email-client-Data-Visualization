@@ -63,23 +63,36 @@ const chartConfig = {
   label: { color: "hsl(var(--background))" },
 } satisfies ChartConfig;
 
-export function BarChartComponent() {
+export function BarChartComponent({
+  ageCookie,
+  genderCookie,
+  fromCookie,
+  toCookie,
+}: {
+  ageCookie: string | undefined;
+  genderCookie: string | undefined;
+  fromCookie: string | undefined;
+  toCookie: string | undefined;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const selectedCategory = searchParams.get("category") || "A";
   const ageFilter =
-    searchParams.get("age") === "all" ? null : searchParams.get("age") || null;
-  const genderFilter =
-    searchParams.get("gender") === "all"
+    searchParams.get("age") === "all" || ageCookie === "all"
       ? null
-      : searchParams.get("gender") || null;
+      : searchParams.get("age") || ageCookie || null;
+  const genderFilter =
+    searchParams.get("gender") === "all" || genderCookie === "all"
+      ? null
+      : searchParams.get("gender") || genderCookie || null;
   const from = decodeURIComponent(
-    searchParams.get("from") || "2024-10-03T18%3A30%3A00.000Z"
+    searchParams.get("from") || fromCookie || "2024-10-03T18%3A30%3A00.000Z"
   );
   const to = decodeURIComponent(
-    searchParams.get("to") || "2024-10-13T18%3A30%3A00.000Z"
+    searchParams.get("to") || toCookie || "2024-10-13T18%3A30%3A00.000Z"
   );
+
   const dateRange = { from: new Date(from), to: new Date(to) };
 
   const filteredData = chartData.filter((item) => {

@@ -10,23 +10,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { userSelection } from "@/lib/actions";
 
-const DataFilter = () => {
+const DataFilter = ({
+  ageCookie,
+  genderCookie,
+  fromCookie,
+  toCookie,
+}: {
+  ageCookie: string | undefined;
+  genderCookie: string | undefined;
+  fromCookie: string | undefined;
+  toCookie: string | undefined;
+}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const age = searchParams.get("age");
-  const gender = searchParams.get("gender");
-  // TODO: manage cookie
-  const handleAgeChange = (value: string) => {
+  const age = searchParams.get("age") || ageCookie;
+  const gender = searchParams.get("gender") || genderCookie;
+
+  const handleAgeChange = async (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("age", value);
     router.push(`?${params.toString()}`);
+    await userSelection({ age: value });
   };
-  const handleGenderChange = (value: string) => {
+  const handleGenderChange = async (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("gender", value);
     router.push(`?${params.toString()}`);
+    await userSelection({ gender: value });
   };
 
   const availableDates = chartData.map((item) => new Date(item.Day));
@@ -34,7 +47,11 @@ const DataFilter = () => {
   return (
     <div className="flex justify-center m-1 mb-10 ">
       <span className="flex flex-wrap justify-center gap-4 border p-4 rounded-lg ">
-        <DateRangePicker availableDates={availableDates} />
+        <DateRangePicker
+          availableDates={availableDates}
+          fromCookie={fromCookie}
+          toCookie={toCookie}
+        />
         <Select
           value={age || "all"}
           defaultValue="all"
