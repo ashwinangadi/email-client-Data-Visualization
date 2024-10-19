@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { userSelection } from "@/lib/actions";
+import { Button } from "../ui/button";
 
 const DataFilter = ({
   ageCookie,
@@ -40,6 +41,21 @@ const DataFilter = ({
     params.set("gender", value);
     router.push(`?${params.toString()}`);
     await userSelection({ gender: value });
+  };
+
+  const handleClearFilters = async () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("age");
+    params.delete("gender");
+    params.delete("from");
+    params.delete("to");
+    router.push(`?${params.toString()}`);
+    await userSelection({
+      age: null,
+      gender: null,
+      from: null,
+      to: null,
+    });
   };
 
   const availableDates = chartData.map((item) => new Date(item.Day));
@@ -81,6 +97,13 @@ const DataFilter = ({
             <SelectItem value="Female">Female</SelectItem>
           </SelectContent>
         </Select>
+        <Button
+          variant="outline"
+          className="border-red-300"
+          onClick={handleClearFilters}
+        >
+          Clear filters
+        </Button>
       </span>
     </div>
   );

@@ -8,12 +8,11 @@ export async function userSelection({
   from,
   to,
 }: {
-  age?: string;
-  gender?: string;
-  from?: Date;
-  to?: Date;
+  age?: string | null;
+  gender?: string | null;
+  from?: Date | null;
+  to?: Date | null;
 }) {
-
   if (age) {
     cookies().set("age", age, {
       path: "/",
@@ -45,8 +44,14 @@ export async function userSelection({
     });
   }
 
-  if (from === undefined && to === undefined) {
+  if (from === null && to === null) {
     cookies().delete("from");
     cookies().delete("to");
+  }
+  if (age === null) {
+    cookies().delete("age");
+  }
+  if (gender === null) {
+    cookies().delete("gender");
   }
 }
