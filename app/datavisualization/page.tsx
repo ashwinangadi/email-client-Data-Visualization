@@ -11,7 +11,7 @@ const DataVisualizationPage = () => {
   const to = cookieStore.get("to")?.value;
 
   return (
-    <section className="container mx-auto py-10">
+    <section className="container mx-auto py-20">
       <DataFilter
         ageCookie={age}
         genderCookie={gender}

@@ -20,7 +20,7 @@ const EmailClientPage = ({
   const emailListQueryClient = getQueryClient();
   emailListQueryClient.prefetchQuery(emailListOptions(searchParams.page || 1));
   return (
-    <section className="container grid gap-6 grid-cols-12 mx-auto mb-10">
+    <section className="fixed top-14 left-0 right-0 bottom-0 container grid gap-6 grid-cols-12 mx-auto mb-10">
       <span
         className={`col-span-12 mx-1 ${
           searchParams?.Id ? "lg:col-span-4" : "col-span-12"

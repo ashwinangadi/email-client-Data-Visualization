@@ -50,7 +50,7 @@ const EmailsList = () => {
       </span>
       <TabsContent value="all" className="">
         <div
-          className="flex flex-col gap-6 h-[85vh] overflow-auto"
+          className="flex flex-col gap-6 h-[80vh] overflow-auto"
           onClick={handleEmailCardClick}
         >
           {data?.list?.map((email: Email) => (
@@ -63,7 +63,7 @@ const EmailsList = () => {
       </TabsContent>
       <TabsContent value="unread" className="">
         <div
-          className="flex flex-col gap-6 h-[90vh] overflow-auto"
+          className="flex flex-col gap-6 h-[88vh] overflow-auto"
           onClick={handleEmailCardClick}
         >
           {unreadEmailList?.length > 0 ? (
@@ -80,7 +80,7 @@ const EmailsList = () => {
 
       <TabsContent value="read">
         <div
-          className="flex flex-col gap-6 h-[90vh] overflow-auto"
+          className="flex flex-col gap-6 h-[88vh] overflow-auto"
           onClick={handleEmailCardClick}
         >
           {readEmailList?.length > 0 ? (
@@ -96,7 +96,7 @@ const EmailsList = () => {
       </TabsContent>
       <TabsContent value="favorites" onClick={handleEmailCardClick}>
         {" "}
-        <div className="flex flex-col gap-6 h-[90vh] overflow-auto">
+        <div className="flex flex-col gap-6 h-[88vh] overflow-auto">
           {favoriteEmailList?.length > 0 ? (
             favoriteEmailList?.map((email: Email) => (
               <EmailCard key={email.id} {...email} />

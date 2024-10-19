@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { userSelection } from "@/lib/actions";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 const DataFilter = ({
   ageCookie,
@@ -56,6 +57,7 @@ const DataFilter = ({
       from: null,
       to: null,
     });
+    toast.success("Filters cleared successfully and set to default values.");
   };
 
   const availableDates = chartData.map((item) => new Date(item.Day));
