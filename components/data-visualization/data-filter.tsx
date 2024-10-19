@@ -50,12 +50,14 @@ const DataFilter = ({
     params.delete("gender");
     params.delete("from");
     params.delete("to");
+    params.delete("category");
     router.push(`?${params.toString()}`);
     await userSelection({
       age: null,
       gender: null,
       from: null,
       to: null,
+      category: null,
     });
     toast.success("Filters cleared successfully and set to default values.");
   };

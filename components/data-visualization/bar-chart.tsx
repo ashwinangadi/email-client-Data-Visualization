@@ -26,6 +26,7 @@ import { chartData } from "@/lib/constants"; // Import chartData
 import { FilteredData } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { userSelection } from "@/lib/actions";
 
 export const description = "A bar chart with a custom label";
 
@@ -68,16 +69,19 @@ export function BarChartComponent({
   genderCookie,
   fromCookie,
   toCookie,
+  categoryCookie,
 }: {
   ageCookie: string | undefined;
   genderCookie: string | undefined;
   fromCookie: string | undefined;
   toCookie: string | undefined;
+  categoryCookie: string | undefined;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const selectedCategory = searchParams.get("category") || "A";
+  const selectedCategory =
+    searchParams.get("category") || categoryCookie || "A";
   const ageFilter =
     searchParams.get("age") === "all" || ageCookie === "all"
       ? null
@@ -114,11 +118,11 @@ export function BarChartComponent({
     value: aggregatedData[key],
   }));
 
-  const handleBarClick = (data: { feature: string }) => {
-    // TODO: manage cookie
+  const handleBarClick = async (data: { feature: string }) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("category", data.feature);
     router.push(`?${params.toString()}`);
+    await userSelection({ category: data.feature });
   };
 
   return (

@@ -7,11 +7,13 @@ export async function userSelection({
   gender,
   from,
   to,
+  category,
 }: {
   age?: string | null;
   gender?: string | null;
   from?: Date | null;
   to?: Date | null;
+  category?: string | null;
 }) {
   if (age) {
     cookies().set("age", age, {
@@ -43,6 +45,14 @@ export async function userSelection({
       maxAge: 60 * 60 * 24 * 7, // One week
     });
   }
+  if (category) {
+    cookies().set("category", category, {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // One week
+    });
+  }
 
   if (from === null && to === null) {
     cookies().delete("from");
@@ -53,5 +63,8 @@ export async function userSelection({
   }
   if (gender === null) {
     cookies().delete("gender");
+  }
+  if (category === null) {
+    cookies().delete("category");
   }
 }

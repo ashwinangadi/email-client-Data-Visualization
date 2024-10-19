@@ -9,6 +9,7 @@ const DataVisualizationPage = () => {
   const gender = cookieStore.get("gender")?.value.toString();
   const from = cookieStore.get("from")?.value;
   const to = cookieStore.get("to")?.value;
+  const category = cookieStore.get("category")?.value.toString();
 
   return (
     <section className="container mx-auto py-20">
@@ -17,12 +18,14 @@ const DataVisualizationPage = () => {
         genderCookie={gender}
         fromCookie={from}
         toCookie={to}
+        // categoryCookie={category}
       />
       <BarChartComponent
         ageCookie={age}
         genderCookie={gender}
         fromCookie={from}
         toCookie={to}
+        categoryCookie={category}
       />
     </section>
   );
