@@ -1,9 +1,14 @@
-import React from 'react'
+import { BarChartComponent } from "@/components/data-visualization/bar-chart";
+import DataFilter from "@/components/data-visualization/data-filter";
+import React from "react";
 
 const DataVisualizationPage = () => {
   return (
-    <div>DataVisualizationPage</div>
-  )
-}
+    <section className="container mx-auto py-10">
+      <DataFilter />
+      <BarChartComponent />
+    </section>
+  );
+};
 
-export default DataVisualizationPage
+export default DataVisualizationPage;
