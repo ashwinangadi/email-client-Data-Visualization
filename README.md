@@ -39,7 +39,7 @@ This project is an email client application inspired by Outlook. The app fetches
    - Allows manual toggling of read/unread status
    - Applies distinct styling to differentiate read and unread emails in the list view
 
-5. **Pagination and Infinite Scrolling**:
+5. **Pagination**:
    - Supports pagination of email lists for large datasets
    - Implements server-side pagination for efficient data loading
 
