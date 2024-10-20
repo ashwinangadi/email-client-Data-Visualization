@@ -8,7 +8,7 @@ This repository contains two completed assignments:
 
 Both projects (Email Client App and Interactive Data Visualization Dashboard) are deployed under the same link:
 
-[https://moonshot-assignment-email-client-and-data-viz.vercel.app/](https://moonshot-assignment-email-client-and-data-viz.vercel.app/)
+[Live Deployed Link.](https://email-client-data-visualization.vercel.app/)
 
 You can access both applications from this single deployment.
 
