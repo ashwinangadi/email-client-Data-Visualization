@@ -27,6 +27,8 @@ import { FilteredData } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { userSelection } from "@/lib/actions";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from "react";
 
 export const description = "A bar chart with a custom label";
 
@@ -84,40 +86,44 @@ export function BarChartComponent({
 
   const selectedCategory =
     searchParams.get("category") || categoryCookie || "A";
-  const ageFilter =
-    searchParams.get("age") === "all" || ageCookie === "all"
-      ? null
-      : searchParams.get("age") || ageCookie || null;
-  const genderFilter =
-    searchParams.get("gender") === "all" || genderCookie === "all"
-      ? null
-      : searchParams.get("gender") || genderCookie || null;
-  const from = decodeURIComponent(
-    searchParams.get("from") || fromCookie || "2024-10-03T18%3A30%3A00.000Z"
-  );
-  const to = decodeURIComponent(
-    searchParams.get("to") || toCookie || "2024-10-13T18%3A30%3A00.000Z"
-  );
+// const ageFilter =
+//   searchParams.get("age") === "all" || ageCookie === "all"
+//     ? null
+//     : searchParams.get("age") || ageCookie || null;
+// const genderFilter =
+//   searchParams.get("gender") === "all" || genderCookie === "all"
+//     ? null
+//     : searchParams.get("gender") || genderCookie || null;
+// const from = decodeURIComponent(
+//   searchParams.get("from") || fromCookie || "2024-10-03T18%3A30%3A00.000Z"
+// );
+// const to = decodeURIComponent(
+//   searchParams.get("to") || toCookie || "2024-10-13T18%3A30%3A00.000Z"
+// );
 
-  const dateRange = { from: new Date(from), to: new Date(to) };
+  const fetchChartData = async () => {
+    const params = new URLSearchParams({
+      age: searchParams.get("age") || ageCookie || "",
+      gender: searchParams.get("gender") || genderCookie || "",
+      from: searchParams.get("from") || fromCookie || "",
+      to: searchParams.get("to") || toCookie || "",
+    });
 
-  const filteredData = chartData.filter((item) => {
-    const itemDate = new Date(item.Day);
-    const isWithinDateRange =
-      dateRange?.from && dateRange?.to
-        ? itemDate >= dateRange.from && itemDate <= dateRange.to
-        : true;
-    return (
-      isWithinDateRange &&
-      (ageFilter ? item.Age === ageFilter : true) &&
-      (genderFilter ? item.Gender === genderFilter : true)
-    );
+    const response = await fetch(`/api/analytics?${params.toString()}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  };
+
+  const { data = {}, error, isLoading } = useQuery({
+    queryKey: ['chartData', searchParams],
+    queryFn: fetchChartData,
   });
 
-  const aggregatedData = aggregateData(filteredData, ageFilter, genderFilter);
-  const formattedData = Object.keys(aggregatedData).map((key) => ({
+  const formattedData = Object.keys(data).map((key) => ({
     feature: key,
-    value: aggregatedData[key],
+    value: data[key],
   }));
 
   const handleBarClick = async (data: { feature: string }) => {
@@ -128,6 +134,9 @@ export function BarChartComponent({
       await userSelection({ userId: userIdCookie, category: data.feature });
     }
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading data</div>;
 
   return (
     <div className="flex flex-col lg:flex-row gap-10 w-full ">
@@ -179,7 +188,7 @@ export function BarChartComponent({
       </CardFooter> */}
       </Card>
 
-      <LineChartComponent data={filteredData} category={selectedCategory} />
+      <LineChartComponent category={selectedCategory} />
     </div>
   );
 }
