@@ -41,7 +41,7 @@ const DataFilter = ({
   const handleAgeChange = async (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("age", value);
-    router.push(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`);
     if (userId) {
       await userSelection({ userId, age: value });
     }
@@ -50,7 +50,7 @@ const DataFilter = ({
   const handleGenderChange = async (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("gender", value);
-    router.push(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`);
     if (userId) {
       await userSelection({ userId, gender: value });
     }
@@ -63,7 +63,7 @@ const DataFilter = ({
     params.delete("from");
     params.delete("to");
     params.delete("category");
-    router.push(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`);
     if (userId) {
       await userSelection({
         userId,

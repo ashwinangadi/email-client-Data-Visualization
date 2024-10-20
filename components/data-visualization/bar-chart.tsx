@@ -123,7 +123,7 @@ export function BarChartComponent({
   const handleBarClick = async (data: { feature: string }) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("category", data.feature);
-    router.push(`?${params.toString()}`);
+    router.replace(`?${params.toString()}`);
     if (userIdCookie) {
       await userSelection({ userId: userIdCookie, category: data.feature });
     }

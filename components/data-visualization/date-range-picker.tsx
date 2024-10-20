@@ -50,7 +50,7 @@ export function DateRangePicker({
       const params = new URLSearchParams(searchParams.toString());
       params.set("from", range.from.toISOString());
       params.set("to", range.to.toISOString());
-      router.push(`?${params.toString()}`);
+      router.replace(`?${params.toString()}`);
     }
     if (userIdCookie) {
       await userSelection({
