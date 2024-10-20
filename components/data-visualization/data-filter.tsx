@@ -13,20 +13,27 @@ import {
 import { userSelection } from "@/lib/actions";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 const DataFilter = ({
   ageCookie,
   genderCookie,
   fromCookie,
   toCookie,
+  userIdCookie,
 }: {
   ageCookie: string | undefined;
   genderCookie: string | undefined;
   fromCookie: string | undefined;
   toCookie: string | undefined;
+  userIdCookie: string | undefined;
 }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { data: session } = useSession();
+
+  // Ensure the user ID is available
+  const userId = userIdCookie || session?.user?.id;
 
   const age = searchParams.get("age") || ageCookie;
   const gender = searchParams.get("gender") || genderCookie;
@@ -34,14 +41,19 @@ const DataFilter = ({
   const handleAgeChange = async (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("age", value);
-    router.push(`?${params.toString()}`);
-    await userSelection({ age: value });
+    router.replace(`?${params.toString()}`);
+    if (userId) {
+      await userSelection({ userId, age: value });
+    }
   };
+
   const handleGenderChange = async (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("gender", value);
-    router.push(`?${params.toString()}`);
-    await userSelection({ gender: value });
+    router.replace(`?${params.toString()}`);
+    if (userId) {
+      await userSelection({ userId, gender: value });
+    }
   };
 
   const handleClearFilters = async () => {
@@ -51,14 +63,17 @@ const DataFilter = ({
     params.delete("from");
     params.delete("to");
     params.delete("category");
-    router.push(`?${params.toString()}`);
-    await userSelection({
-      age: null,
-      gender: null,
-      from: null,
-      to: null,
-      category: null,
-    });
+    router.replace(`?${params.toString()}`);
+    if (userId) {
+      await userSelection({
+        userId,
+        age: null,
+        gender: null,
+        from: null,
+        to: null,
+        category: null,
+      });
+    }
     toast.success("Filters cleared successfully and set to default values.");
   };
 
@@ -71,6 +86,7 @@ const DataFilter = ({
           availableDates={availableDates}
           fromCookie={fromCookie}
           toCookie={toCookie}
+          userIdCookie={userIdCookie}
         />
         <Select
           value={age || "all"}

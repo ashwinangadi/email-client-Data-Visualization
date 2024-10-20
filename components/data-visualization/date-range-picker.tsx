@@ -19,10 +19,12 @@ export function DateRangePicker({
   availableDates,
   fromCookie,
   toCookie,
+  userIdCookie,
 }: {
   availableDates: Date[];
   fromCookie: string | undefined;
   toCookie: string | undefined;
+  userIdCookie: string | undefined;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -48,9 +50,15 @@ export function DateRangePicker({
       const params = new URLSearchParams(searchParams.toString());
       params.set("from", range.from.toISOString());
       params.set("to", range.to.toISOString());
-      router.push(`?${params.toString()}`);
+      router.replace(`?${params.toString()}`);
     }
-    await userSelection({ from: range?.from, to: range?.to });
+    if (userIdCookie) {
+      await userSelection({
+        userId: userIdCookie,
+        from: range?.from,
+        to: range?.to,
+      });
+    }
   };
 
   const availableDateSet = new Set(

@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { signInSchema } from "@/lib/zod";
 import { getUser } from "@/lib/authActions";
 import { revalidatePath } from "next/cache";
+import { cookies } from 'next/headers';
 // import { NextResponse } from "next/server";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -22,6 +23,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (passwordsMatch) {
             revalidatePath("/cart");
+            // Set user-specific cookies
+            const cookieStore = cookies();
+            cookieStore.set('userId', user.id, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 60 * 60 * 24 * 7, // One week
+              path: '/',
+            });
+            // Set other cookies as needed
             return user;
           }
         }
