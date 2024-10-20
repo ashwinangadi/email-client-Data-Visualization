@@ -99,7 +99,7 @@ export function DateRangePicker({
             defaultMonth={date?.from}
             selected={date}
             onSelect={handleSelect}
-            numberOfMonths={1}
+            numberOfMonths={2}
             disabled={(date) =>
               !availableDateSet.has(date.toISOString().split("T")[0])
             }
