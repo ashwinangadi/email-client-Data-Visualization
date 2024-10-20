@@ -3,20 +3,24 @@
 import { cookies } from "next/headers";
 
 export async function userSelection({
+  userId,
   age,
   gender,
   from,
   to,
   category,
 }: {
+  userId: string;
   age?: string | null;
   gender?: string | null;
   from?: Date | null;
   to?: Date | null;
   category?: string | null;
 }) {
+  const cookieStore = cookies();
+
   if (age) {
-    cookies().set("age", age, {
+    cookieStore.set(`age-${userId}`, age, {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -24,7 +28,7 @@ export async function userSelection({
     });
   }
   if (gender) {
-    cookies().set("gender", gender, {
+    cookieStore.set(`gender-${userId}`, gender, {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -32,13 +36,13 @@ export async function userSelection({
     });
   }
   if (from && to) {
-    cookies().set("from", from.toISOString(), {
+    cookieStore.set(`from-${userId}`, from.toISOString(), {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // One week
     });
-    cookies().set("to", to.toISOString(), {
+    cookieStore.set(`to-${userId}`, to.toISOString(), {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -46,7 +50,7 @@ export async function userSelection({
     });
   }
   if (category) {
-    cookies().set("category", category, {
+    cookieStore.set(`category-${userId}`, category, {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -55,16 +59,16 @@ export async function userSelection({
   }
 
   if (from === null && to === null) {
-    cookies().delete("from");
-    cookies().delete("to");
+    cookieStore.delete(`from-${userId}`);
+    cookieStore.delete(`to-${userId}`);
   }
   if (age === null) {
-    cookies().delete("age");
+    cookieStore.delete(`age-${userId}`);
   }
   if (gender === null) {
-    cookies().delete("gender");
+    cookieStore.delete(`gender-${userId}`);
   }
   if (category === null) {
-    cookies().delete("category");
+    cookieStore.delete(`category-${userId}`);
   }
 }

@@ -70,12 +70,14 @@ export function BarChartComponent({
   fromCookie,
   toCookie,
   categoryCookie,
+  userIdCookie,
 }: {
   ageCookie: string | undefined;
   genderCookie: string | undefined;
   fromCookie: string | undefined;
   toCookie: string | undefined;
   categoryCookie: string | undefined;
+  userIdCookie: string | undefined;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -122,7 +124,9 @@ export function BarChartComponent({
     const params = new URLSearchParams(searchParams.toString());
     params.set("category", data.feature);
     router.push(`?${params.toString()}`);
-    await userSelection({ category: data.feature });
+    if (userIdCookie) {
+      await userSelection({ userId: userIdCookie, category: data.feature });
+    }
   };
 
   return (
