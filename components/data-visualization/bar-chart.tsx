@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { userSelection } from "@/lib/actions";
 import { useQuery } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 
 export const description = "A bar chart with a custom label";
 
@@ -114,8 +115,8 @@ export function BarChartComponent({
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading data</div>;
+  // if (isLoading) return <div>Loading...</div>;
+  // if (error) return <div>Error loading data</div>;
 
   return (
     <div className="flex flex-col lg:flex-row gap-10 w-full ">
@@ -126,50 +127,55 @@ export function BarChartComponent({
         </CardHeader>
         <CardContent className="p-2">
           <ChartContainer config={chartConfig}>
-            <BarChart
-              data={formattedData}
-              layout="vertical"
-              margin={{ right: 16 }}
-              onClick={(data) =>
-                handleBarClick(data.activePayload?.[0]?.payload)
-              }
-            >
-              <CartesianGrid horizontal={false} />
-              <YAxis
-                dataKey="feature"
-                type="category"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <XAxis type="number" />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="line" />}
-              />
-              <Bar dataKey="value" fill="hsl(var(--chart-1))" radius={4}>
-                <LabelList
-                  dataKey="value"
-                  position="insideRight"
-                  offset={8}
-                  className="fill-white"
-                  fontSize={12}
-                />
-              </Bar>
-            </BarChart>
+            {!isLoading ? (
+              !error ? (
+                <BarChart
+                  data={formattedData}
+                  layout="vertical"
+                  margin={{ right: 16 }}
+                  onClick={(data) =>
+                    handleBarClick(data.activePayload?.[0]?.payload)
+                  }
+                >
+                  <CartesianGrid horizontal={false} />
+                  <YAxis
+                    dataKey="feature"
+                    type="category"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                  />
+                  <XAxis type="number" />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent indicator="line" />}
+                  />
+                  <Bar dataKey="value" fill="hsl(var(--chart-1))" radius={4}>
+                    <LabelList
+                      dataKey="value"
+                      position="insideRight"
+                      offset={8}
+                      className="fill-white"
+                      fontSize={12}
+                    />
+                  </Bar>
+                </BarChart>
+              ) : (
+                <p className="text-center text-red-500 text-base">Error loading data</p>
+              )
+            ) : (
+              <Loader className="animate-spin h-8 w-8 text-center m-auto" />
+            )}
           </ChartContainer>
         </CardContent>
 
-        {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Showing total time spent on features
-        </div>
-      </CardFooter> */}
       </Card>
 
       <LineChartComponent
         data={data?.filteredData}
         category={selectedCategory}
+        isLoading={isLoading}
+        error={error}
       />
     </div>
   );

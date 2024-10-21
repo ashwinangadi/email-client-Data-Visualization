@@ -19,16 +19,20 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChartConfig, ChartContainer } from "../ui/chart";
-import { ZoomOut } from "lucide-react";
+import { Loader, ZoomOut } from "lucide-react";
 import { ZoomIn } from "lucide-react";
 import { FilteredData } from "@/lib/types";
 
 export function LineChartComponent({
   data,
   category,
+  isLoading,
+  error,
 }: {
   data: FilteredData;
   category: string;
+  isLoading: boolean;
+  error: Error | boolean | null;
 }) {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [startIndex, setStartIndex] = useState(0);
@@ -49,8 +53,6 @@ export function LineChartComponent({
       setEndIndex(Math.min(endIndex + 1, data.length - 1));
     }
   };
-
-  const visibleData = data.slice(startIndex, endIndex + 1);
 
   const chartConfig = {
     desktop: {
@@ -76,19 +78,29 @@ export function LineChartComponent({
       </CardHeader>
       <CardContent className="p-2">
         <ChartContainer config={chartConfig}>
-          <LineChart
-            width={600}
-            height={300}
-            data={visibleData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="Day" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey={category} stroke="#8884d8" />
-            <Brush dataKey="Day" height={30} stroke="#8884d8" />
-          </LineChart>
+          {!isLoading ? (
+            !error ? (
+              <LineChart
+                width={600}
+                height={300}
+                data={data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="Day" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey={category} stroke="#8884d8" />
+                <Brush dataKey="Day" height={30} stroke="#8884d8" />
+              </LineChart>
+            ) : (
+              <p className="text-center text-red-500 text-base">
+                Error loading data
+              </p>
+            )
+          ) : (
+            <Loader className="animate-spin h-8 w-8 text-center m-auto" />
+          )}
         </ChartContainer>
       </CardContent>
     </Card>
