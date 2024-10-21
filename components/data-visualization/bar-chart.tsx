@@ -22,38 +22,12 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { LineChartComponent } from "@/components/data-visualization/line-chart";
-import { chartData } from "@/lib/constants"; // Import chartData
-import { FilteredData } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { userSelection } from "@/lib/actions";
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export const description = "A bar chart with a custom label";
-
-// Function to aggregate data based on filters
-const aggregateData = (
-  data: FilteredData,
-  ageFilter: string | null,
-  genderFilter: string | null
-) => {
-  return data
-    .filter(
-      (item) =>
-        (ageFilter ? item.Age === ageFilter : true) &&
-        (genderFilter ? item.Gender === genderFilter : true)
-    )
-    .reduce((acc: Record<string, number>, curr) => {
-      Object.keys(curr).forEach((key) => {
-        if (key !== "Day" && key !== "Age" && key !== "Gender") {
-          acc[key] =
-            (acc[key] || 0) + (curr[key as keyof typeof curr] as number);
-        }
-      });
-      return acc;
-    }, {} as Record<string, number>);
-};
 
 // Update the chartConfig to include colors for each feature
 const chartConfig = {
@@ -86,44 +60,53 @@ export function BarChartComponent({
 
   const selectedCategory =
     searchParams.get("category") || categoryCookie || "A";
-// const ageFilter =
-//   searchParams.get("age") === "all" || ageCookie === "all"
-//     ? null
-//     : searchParams.get("age") || ageCookie || null;
-// const genderFilter =
-//   searchParams.get("gender") === "all" || genderCookie === "all"
-//     ? null
-//     : searchParams.get("gender") || genderCookie || null;
-// const from = decodeURIComponent(
-//   searchParams.get("from") || fromCookie || "2024-10-03T18%3A30%3A00.000Z"
-// );
-// const to = decodeURIComponent(
-//   searchParams.get("to") || toCookie || "2024-10-13T18%3A30%3A00.000Z"
-// );
+  const ageFilter =
+    searchParams.get("age") === "all" || ageCookie === "all"
+      ? null
+      : searchParams.get("age") || ageCookie || null;
+  const genderFilter =
+    searchParams.get("gender") === "all" || genderCookie === "all"
+      ? null
+      : searchParams.get("gender") || genderCookie || null;
+  const from = decodeURIComponent(
+    searchParams.get("from") || fromCookie || "2024-10-03T18%3A30%3A00.000Z"
+  );
+  const to = decodeURIComponent(
+    searchParams.get("to") || toCookie || "2024-10-13T18%3A30%3A00.000Z"
+  );
 
   const fetchChartData = async () => {
     const params = new URLSearchParams({
-      age: searchParams.get("age") || ageCookie || "",
-      gender: searchParams.get("gender") || genderCookie || "",
-      from: searchParams.get("from") || fromCookie || "",
-      to: searchParams.get("to") || toCookie || "",
+      age: ageFilter || "",
+      gender: genderFilter || "",
+      from: from || "",
+      to: to || "",
     });
 
     const response = await fetch(`/api/analytics?${params.toString()}`);
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
-    return response.json();
+    const { filteredData, aggregatedData } = await response.json();
+    return { filteredData, aggregatedData };
   };
 
-  const { data = {}, error, isLoading } = useQuery({
-    queryKey: ['chartData', searchParams],
+  const {
+    data = { filteredData: [], aggregatedData: [] },
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["chartData", ageFilter, genderFilter, from, to],
     queryFn: fetchChartData,
+    // {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      // cacheTime: 1000 * 60 * 10, // 10 minutes
+    // }
   });
 
-  const formattedData = Object.keys(data).map((key) => ({
+  const formattedData = Object.keys(data?.aggregatedData).map((key) => ({
     feature: key,
-    value: data[key],
+    value: data?.aggregatedData[key],
   }));
 
   const handleBarClick = async (data: { feature: string }) => {
@@ -188,7 +171,10 @@ export function BarChartComponent({
       </CardFooter> */}
       </Card>
 
-      <LineChartComponent category={selectedCategory} />
+      <LineChartComponent
+        data={data?.filteredData}
+        category={selectedCategory}
+      />
     </div>
   );
 }

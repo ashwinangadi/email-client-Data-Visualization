@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,10 +8,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   Brush,
 } from "recharts";
-import { useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -23,44 +21,18 @@ import { Button } from "@/components/ui/button";
 import { ChartConfig, ChartContainer } from "../ui/chart";
 import { ZoomOut } from "lucide-react";
 import { ZoomIn } from "lucide-react";
-// import { FilteredData } from "@/lib/types";
-import { useQuery } from '@tanstack/react-query';
+import { FilteredData } from "@/lib/types";
 
 export function LineChartComponent({
-  // data,
+  data,
   category,
 }: {
-  // data: FilteredData;
+  data: FilteredData;
   category: string;
 }) {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(0);
-  const searchParams = useSearchParams();
-
-  const fetchChartData = async () => {
-    const params = new URLSearchParams({
-      age: searchParams.get("age") || "",
-      gender: searchParams.get("gender") || "",
-      from: searchParams.get("from") || "",
-      to: searchParams.get("to") || "",
-    });
-
-    const response = await fetch(`/api/data?${params.toString()}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  };
-
-  const { data = [] } = useQuery({
-    queryKey: ['chartData', searchParams],
-    queryFn: fetchChartData,
-  });
-
-  useEffect(() => {
-    setEndIndex(data.length - 1);
-  }, [data]);
+  const [endIndex, setEndIndex] = useState(data.length - 1);
 
   const handleZoomIn = () => {
     if (zoomLevel < data.length / 2) {
@@ -77,6 +49,8 @@ export function LineChartComponent({
       setEndIndex(Math.min(endIndex + 1, data.length - 1));
     }
   };
+
+  const visibleData = data.slice(startIndex, endIndex + 1);
 
   const chartConfig = {
     desktop: {
@@ -105,7 +79,7 @@ export function LineChartComponent({
           <LineChart
             width={600}
             height={300}
-            data={data}
+            data={visibleData}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />

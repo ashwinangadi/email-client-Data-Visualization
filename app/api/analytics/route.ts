@@ -27,16 +27,24 @@ export async function GET(request: NextRequest) {
       );
     });
 
-    const aggregatedData = filteredData.reduce((acc: Record<string, number>, curr) => {
-      Object.keys(curr).forEach((key) => {
-        if (key !== "Day" && key !== "Age" && key !== "Gender") {
-          acc[key] = (acc[key] || 0) + (curr[key as keyof typeof curr] as number);
-        }
-      });
-      return acc;
-    }, {} as Record<string, number>);
+    const aggregatedData = filteredData.reduce(
+      (acc: Record<string, number>, curr) => {
+        Object.keys(curr).forEach((key) => {
+          if (key !== "Day" && key !== "Age" && key !== "Gender") {
+            acc[key] =
+              (acc[key] || 0) + (curr[key as keyof typeof curr] as number);
+          }
+        });
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
-    return NextResponse.json(aggregatedData);
+    return NextResponse.json({
+      filteredData,
+      aggregatedData
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-var, @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
